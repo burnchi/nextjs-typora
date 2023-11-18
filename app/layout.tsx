@@ -1,3 +1,4 @@
+import LeftSideLayout from '@/components/home/LeftSideLayout'
 import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
@@ -16,7 +17,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className='m-0 p-0 w-[100vw] h-[100vh] border flex'>
+        <LeftSideLayout></LeftSideLayout>
+        {children}
+        </body>
     </html>
   )
 }

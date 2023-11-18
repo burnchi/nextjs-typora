@@ -1,0 +1,792 @@
+---
+title: Git的使用
+date: 2023-11-01
+description: Git 是一种分布式版本控制系统，用于跟踪和管理源代码和其他文件的变更。它由Linus Torvalds创建，并广泛用于软件开发项目。
+updateAt: 2023-11-13
+tags: 
+- git
+- 代码管理
+---
+
+# 概述
+
+<HighlightEle>分布式仓库管理工具</HighlightEle>
+
+
+<Image
+  src="/mdpic/image-20231027230732133.png"
+  width="1920"
+  height="1080"
+  alt="image-20231027230732133.png"
+  quality={100}
+  size="100vw"
+/>
+
+
+工作区（Working Directory） 是直接编辑的地方，肉眼可见，直接操作。
+
+暂存区（Stage 或 Index） 数据暂时存放的区域。
+
+版本库（commit History） 存放已经提交的数据，push 的时候，就是把这个区的数据 push 到远程git仓库了。
+
+
+
+
+
+## 配置登录信息
+
+```bash
+E:\hexo>git config --global user.name "burnchi"
+E:\hexo>git config --global user.email "1273732363@qq.com"
+```
+
+
+
+## 推送当前博客目录到GitHub
+
+（创建仓库之后，github上有配置说明）
+
+```
+git init     创建本地仓库
+git status   查看文件状态
+git add . 	 提交到暂存区
+git commit -m "message" 提交到本地仓库
+git branch -M main 
+git remote add origin https://github.com/burnchi/blog.git  （blog是新建的仓库）
+git push -u origin main
+```
+
+## 恢复或迁移
+
+```
+git clone https://github.com/burnchi/blog.git
+```
+
+
+
+# 查看commit了什么内容
+
+要查看某个特定提交（commit）所包含的具体内容或变更，您可以使用 `git show` 命令，并提供要查看的提交的哈希值或提交引用（如分支名称）。这个命令将显示提交的详细信息以及与上一个提交相比的变更。
+
+以下是使用 `git show` 命令的示例：
+
+```bash
+git show <commit_hash>
+```
+
+或者，如果您知道提交所在的分支，您可以使用分支名称，例如：
+
+```bash
+git show <branch_name>
+```
+
+`git show` 命令将显示所选提交的详细信息，包括提交哈希值、作者、提交日期、提交消息以及变更的内容。变更内容通常以 diff 格式显示，显示了在该提交中添加、删除和修改的文件和行。
+
+例如：
+
+```bash
+git show abc123456
+```
+
+或
+
+```bash
+git show main
+```
+
+请替换 `<commit_hash>` 或 `<branch_name>` 为您要查看的特定提交或分支的标识符。
+
+这将允许您查看提交的详细内容，以便了解提交包含的具体更改。如果您想查看多个提交之间的差异，您可以使用 `git diff` 命令，提供两个不同的提交标识符来比较它们之间的差异。
+
+
+
+## 修改commit的提示语
+
+如果你需要修改最近的 Git 提交消息（commit message），可以使用以下步骤：
+
+1. **找到要修改的提交：** 首先，使用 `git log` 命令来查看最近的提交历史，找到你想要修改的提交。记住该提交的 SHA-1 标识符（通常是一长串字符）。
+
+2. **使用 `--amend` 选项来修改提交：** 执行以下命令，将 `YOUR_NEW_MESSAGE` 替换为你想要的新提交消息，并将 `SHA1_OF_COMMIT` 替换为你要修改的提交的 SHA-1 标识符：
+
+   ```bash
+   git commit --amend -m "YOUR_NEW_MESSAGE"
+   ```
+
+   例如，如果你要修改最新的提交消息，可以使用以下命令：
+
+   ```bash
+   git commit --amend -m "Updated commit message"
+   ```
+
+   如果你要修改之前的提交，需要提供该提交的 SHA-1 标识符。
+
+3. **保存并关闭编辑器：** 这将打开一个文本编辑器，允许你编辑提交消息。编辑消息后，保存并关闭编辑器。
+
+4. **推送修改：** 如果你修改的是已经推送到远程仓库的提交，你需要强制推送修改。使用以下命令：
+
+   ```bash
+   git push --force
+   ```
+
+   这会将修改后的提交消息推送到远程仓库。请谨慎使用 `--force` 选项，因为它会覆盖远程仓库的历史记录。
+
+请注意，修改提交消息后，该提交的 SHA-1 标识符也会发生变化，因此如果其他人已经基于该提交进行了工作，你需要与他们协调以避免冲突。
+
+如果你要修改多个连续的提交消息，可以使用交互式重新基础（interactive rebase）来修改多个提交消息。这需要更复杂的步骤，但允许你一次性修改多个提交。
+
+
+
+## 多次commit后再push会怎样
+
+如果你在本地进行了多次连续的提交（多个 commit），然后执行 `git push`，Git 会将这些提交推送到远程仓库。**每个提交都会成为远程仓库的一部分**，并在远程仓库的分支历史中记录下来。
+
+当你执行 `git push` 时，Git 将本地分支的提交推送到远程分支。这些提交会追加到远程分支的历史记录中。如果其他人在此期间也向远程分支推送了更改，可能会发生冲突，需要解决冲突后再次推送。
+
+一般来说，**多次连续的提交会形成一系列历史记录**，它们在远程分支的历史记录中按照提交顺序排列。这些提交会被保留在远程分支中，**除非你执行了 `git push --force`（或 `-f`）来强制推送并覆盖远程分支的历史记录。谨慎使用 `--force`，因为它可能导致数据丢失或冲突**。
+
+如果你在推送之前需要合并或重组提交，你可以使用交互式重新基础（interactive rebase）来编辑、合并或重新排列提交。这可以帮助你保持提交历史的整洁性和可读性。
+
+总之，`git push` 用于将本地提交推送到远程仓库，远程分支会记录所有的提交历史。如果你对提交历史有特殊要求，可以使用相应的 Git 命令来管理提交。
+
+
+
+
+
+
+
+# 查看日志
+
+<Image
+src="/mdpic/image-20231027232012544.png"
+width="1920"
+height="1080"
+alt="image-20231027232012544.png"
+size="100vw"
+quality={100}
+/>
+
+
+
+
+
+```
+//查看commitID
+git log --oneline
+//查看之前的操作，包括已经删除的记录
+git reflog 
+```
+
+
+
+
+
+# 版本回退
+
+回到指定commit的版本，**代码也会改变成那个版本的代码**，**这种回退方法github上没有提示回退提示**
+
+```
+git reset --hard ff4009fa225bfba3ce9bca2c8bf6967d1bd37dee
+```
+
+
+
+
+
+# 删除没有追踪的文件
+
+要删除未追踪的文件（即未添加到版本控制的文件），您可以使用以下 Git 命令：
+
+1. **查看未追踪的文件：** 首先，您可以使用 `git status` 命令查看未追踪的文件列表。这将显示未添加到版本控制的文件。
+
+   ```bash
+   git status
+   ```
+
+2. **删除未追踪的文件：** 一旦您确定要删除这些未追踪的文件，您可以使用 `git clean` 命令。默认情况下，`git clean` 只会显示要删除的文件列表，而不会实际删除它们。
+
+   ```bash
+   git clean -n
+   ```
+
+   这将列出要删除的未追踪文件，但不会实际删除它们。这个步骤用于确认将要删除的文件。
+
+3. **实际删除未追踪的文件：** 如果您确认要删除这些未追踪文件，可以使用 `-f` 选项来执行删除操作。
+
+   ```bash
+   git clean -f
+   ```
+
+   请谨慎使用 `-f` 选项，因为它会无条件删除文件，而无法恢复。
+
+   如果列表显示的未跟踪文件夹是您要删除的，请使用以下命令删除它们：
+
+   ```
+   git clean -f -d
+   ```
+
+   - `-f` 选项表示强制删除，确保执行删除操作。
+   - `-d` 选项表示删除未跟踪的目录。
+
+如果您只想删除特定类型的文件（例如，删除所有`.log` 文件），您可以使用 `-i` 选项并指定文件模式，例如：
+
+```bash
+git clean -i -e "*.log"
+```
+
+这会显示一个互动的界面，允许您选择要删除的文件。
+
+请注意，使用 `git clean` 命令时要非常小心，因为它会永久删除文件，无法还原。确保您了解将要删除的文件，并备份重要文件，以免意外删除导致数据丢失。
+
+
+
+## 如果使用了git clean -f 但是未跟踪文件还在
+
+如果使用了 `git clean -f` 命令但未跟踪的文件仍然存在，可能有几个原因：
+
+1. **文件受 `.gitignore` 影响：** 如果未跟踪的文件在 `.gitignore` 文件中被列为忽略的文件或目录，那么 `git clean` 默认情况下不会删除它们。请确保 `.gitignore` 文件中不包含这些文件或目录，或者使用 `-x` 选项来强制删除忽略的文件：
+
+   ```bash
+   git clean -fx
+   ```
+
+2. **权限问题：** 如果您没有足够的权限来删除文件，可能会导致删除失败。确保您有足够的权限来删除文件或目录。
+
+3. **操作系统限制：** 某些操作系统可能会对某些文件或目录施加限制，阻止删除操作。这可能包括受保护的系统文件或目录。请确保您尝试删除的文件或目录不受操作系统的保护。
+
+4. **已经被添加到 Git：** 如果未跟踪的文件已经被添加到 Git（例如，通过 `git add`），那么它们不再被视为未跟踪文件，因此 `git clean` 不会删除它们。请使用 `git reset` 或 `git restore` 将它们还原为未跟踪状态，然后再运行 `git clean`。
+
+5. **不小心删除错误目录：** 请确保您在正确的目录下运行 `git clean` 命令，并且确认您在正确的 Git 仓库中工作。
+
+如果上述解决方法都没有解决问题，可能需要检查您的操作并确保没有其他因素干扰删除未跟踪文件的过程。如果问题仍然存在，考虑检查文件系统、文件和目录权限以及操作系统限制。
+
+
+
+## 怎么push到远端
+
+如果您回滚到了第二个提交（commit）并修改了内容，然后想要将这些修改推送到远程仓库，您可以按照以下步骤操作：
+
+1. 首先，确保您已经在本地提交了您的更改。使用 `git status` 来确保您的工作目录是干净的，并且您已经提交了您的更改。
+
+2. 使用 `git log` 命令查找第二个提交的哈希值，以便了解您要回滚到哪个提交。假设第二个提交的哈希是 `abc123`.
+
+3. 使用 `git reset` 命令将当前分支回滚到第二个提交，但保留您的更改在工作目录中：
+
+   ```bash
+   git reset abc123
+   ```
+
+4. 然后，您可以编辑工作目录中的文件，进行您想要的更改。
+
+5. 一旦您完成了修改，使用 `git add` 和 `git commit` 命令将这些更改提交到本地仓库：
+
+   ```bash
+   git add .
+   git commit -m "Your commit message"
+   ```
+
+6. 最后，使用 `git push` 命令将这个更新推送到远程仓库。由于您的分支已经回滚到第二个提交，您可能需要使用 `-f` 选项来强制推送：
+
+   ```bash
+   git push -f origin your-branch-name
+   ```
+
+   请将 `your-branch-name` 替换为您的分支的名称。
+
+这将覆盖远程分支的历史，所以请谨慎使用 `-f` 选项，确保您没有重要的未合并更改。如果您正在与他人协作，最好在执行强制推送之前与他们进行沟通，以避免潜在的冲突和问题。
+
+
+
+
+
+
+
+# 分支
+
+<Image
+src="/mdpic/image-20231028131913147.png"
+width="1920"
+height="1080"
+alt="image-20231028131913147.png"
+size="100vw"
+/>
+
+Git 分支是在 Git 版本控制系统中用于管理代码开发和版本控制的重要概念。**分支允许多人在同一项目上同时工作，而不会互相干扰**。下面是有关 Git 分支的一些基本概念和常见操作：
+
+1. **主分支（master 或 main）：** 主分支是一个 Git 仓库的默认分支，通常用于稳定的生产代码。在一些新的项目中，人们开始使用 `main` 分支代替 `master` 分支，以避免使用含有含义的术语。
+
+2. **创建分支：** 你可以创建新的分支来**开发新功能**或**修复问题**。使用以下命令创建新分支：
+
+   ```bash
+   git branch new-branch-name
+   ```
+
+3. **切换分支：** 使用以下命令来切换到新创建的分支：
+
+   ```bash
+   git checkout new-branch-name
+   ```
+
+   或者在 Git 2.23 版本之后，可以使用以下命令：
+
+   ```bash
+   git switch new-branch-name
+   //切换并新建分支
+   git switch -c xiaohong
+   ```
+
+4. **查看分支：** 使用以下命令来查看当前分支和可用的分支：
+
+   ```bash
+   git branch
+   ```
+
+5. **合并分支：** 当你完成分支上的工作后，可以将其合并回主分支。使用以下命令**将分支合并到当前分支**（通常是主分支）：
+
+   ```bash
+   git merge branch-to-merge
+   ```
+
+6. **删除分支：** **如果分支的工作已经完成**，**你可以删除它以保持仓库的整洁性**。使用以下命令删除分支：
+
+   ```bash
+   git branch -d branch-to-delete
+   ```
+
+7. **远程分支：** 除了本地分支，Git 还支持远程分支，这些分支存在于远程 Git 仓库中。你可以使用 `git fetch` 命令获取远程分支的最新更改，以及 `git push` 命令将本地分支推送到远程仓库。
+
+这些是 Git 分支的一些基本概念和常见操作。分支在协作开发中非常有用，因为它们允许多人在不干扰彼此的情况下同时工作。根据项目需求，你可以创建和管理多个分支来处理不同的任务和功能。
+
+
+
+## 查看当前所在分支
+
+<Image
+src="/mdpic/image-20231027235821491.png"
+width="718"
+height="404"
+alt="image-20231027235821491.png"
+size="100vw"
+/>
+
+
+
+
+
+
+
+## 当一个分支修改内容后，其他分支的表现
+
+小红分支修改了内容并提交后
+
+```
+PS E:\next-blog\test\test1> git status
+On branch xiaohong
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git restore <file>..." to discard changes in working directory)
+        modified:   app/component/header.tsx
+
+no changes added to commit (use "git add" and/or "git commit -a")
+PS E:\next-blog\test\test1> git add . 
+PS E:\next-blog\test\test1> git commit -m "小红提交第一次更改"
+[xiaohong 5ce1fc3] 小红提交第一次更改
+ 1 file changed, 3 insertions(+)
+```
+
+<Image
+src="/mdpic/image-20231028000723276.png"
+width="718"
+height="404"
+alt="image-20231028000723276.png"
+size="100vw"
+/>
+
+
+
+这时，切换到main分支，看不到小红分支的代码修改
+
+<Image
+src="/mdpic/image-20231028000611919.png"
+width="718"
+height="404"
+alt="image-20231028000611919.png"
+size="100vw"
+/>
+
+
+
+
+
+## 分支合并
+
+如果此时让main分支也想得到小红分支修改后的代码，可以使用合并
+
+**切换到main分支**，再
+
+```
+git merge xiaohong
+```
+
+查看状态
+
+```
+git status
+```
+
+<Image
+src="/mdpic/image-20231028121102900.png"
+width="718"
+height="404"
+alt="image-20231028121102900.png"
+size="100vw"
+/>
+
+
+
+```
+git add .
+git commit -m "main合并了小红"
+```
+
+
+
+如果有冲突，需要先解决冲突，**没有则自动合并并且commit**
+
+
+
+如果你在合并时使用了 `--no-commit` 选项，合并会保持未提交状态，此时你需要手动执行 `git commit` 命令来创建一个合并提交。不过，在大多数情况下，合并时不需要显式执行 `git commit`，因为 Git 会自动处理合并提交的创建。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 删除分支
+
+要删除一个分支，您可以使用 `git branch -d` 或 `git branch -D` 命令，具体取决于您是否想要强制删除分支。下面是这两个选项的解释和示例：
+
+1. **安全删除分支 (`-d`)：**
+   如果您想要删除一个分支，但只在它的所有更改都已经合并到当前分支（通常是主分支）时才允许删除，您可以使用 `-d` 选项。这将确保不会丢失未合并的更改。
+
+   ```bash
+   git branch -d branch_name
+   ```
+
+   请用您要删除的分支的名称替换 `branch_name`。
+
+   示例：
+
+   ```bash
+   git branch -d feature-branch
+   ```
+
+2. **强制删除分支 (`-D`)：**
+   如果您确定要删除一个分支，无论其中的更改是否已经合并，您可以使用 `-D` 选项。这将强制删除分支。
+
+   ```bash
+   git branch -D branch_name
+   ```
+
+   示例：
+
+   ```bash
+   git branch -D feature-branch
+   ```
+
+请注意，在使用 `-D` 选项时，未合并的更改将被永久删除，因此要谨慎使用。通常，推荐使用 `-d` 选项来删除分支，以确保未合并的更改不会丢失。
+
+另外，如果您想要删除远程分支，可以使用 `git push` 命令来删除它。例如：
+
+```bash
+git push origin --delete branch_name
+```
+
+这将从远程仓库中删除指定的分支。请确保在删除分支之前，您已经完成了相关的合并或备份，以防止数据丢失。
+
+
+
+
+
+
+
+## 解决冲突
+
+合并时同一文件修改同一行代码时 有冲突
+
+小红提交
+
+<Image
+src="/mdpic/image-20231028122237766.png"
+width="718"
+height="404"
+alt="image-20231028122237766.png"
+size="100vw"
+/>
+
+
+
+main提交
+
+<Image
+src="/mdpic/image-20231028122312722.png"
+width="718"
+height="404"
+alt="image-20231028122312722.png"
+size="100vw"
+/>
+
+合并时
+
+<Image
+src="/mdpic/image-20231028122405848.png"
+width="718"
+height="404"
+alt="image-20231028122405848.png"
+size="100vw"
+/>
+
+选择用哪个修改的
+
+<Image
+src="/mdpic/image-20231028122745655.png"
+width="718"
+height="404"
+alt="image-20231028122745655.png"
+size="100vw"
+/>
+
+或者两个修改的都不要，把对比内容全删了，添加新的保存文件
+
+<Image
+src="/mdpic/image-20231028122842728.png"
+width="718"
+height="404"
+alt="image-20231028122842728.png"
+size="100vw"
+/>
+
+
+
+解决完冲突后
+
+```
+PS E:\next-blog\test\test1> git add .
+PS E:\next-blog\test\test1> git commit -m "合并后，都不满意，自己要新的修改"
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+## 为什么人们开始使用 main 分支代替 master 分支
+
+人们开始使用 `main` 分支代替 `master` 分支的主要原因是减少与语言和符号的潜在关联。`master` 分支的术语可能被视为具有不适当的含义，因为它可能与历史上的奴隶制或其他不合适的关联相关联。为了避免使用这样的术语，社区开始采用更中性的 `main` 分支。
+
+这一变化体现了对开放、包容和多元文化价值观的尊重。通过采用更中性的术语，开发者社区可以更好地迎接全球多样性，避免与不必要的历史和文化关联相混淆。
+
+此外，一些版本控制工具和托管平台（如 GitHub 和 GitLab）也开始默认使用 `main` 分支作为新项目的主要分支，以反映这一变化。
+
+虽然改变分支名称只是一个符号性的改变，但它反映了开源社区中对包容性和多元性的不断努力。开发者可以继续使用 Git 和版本控制系统，但现在使用更中性的术语 `main` 分支。这种变化有助于打破潜在的文化障碍，使技术社区更加开放和包容。
+
+
+
+## 推送分支到远程仓库
+
+要将一个本地分支推送到远程仓库，你可以使用 `git push` 命令，遵循以下基本语法：
+
+```bash
+git push <remote> <branch>
+```
+
+其中：
+
+- `<remote>` 是你要推送到的远程仓库的名称。通常，远程仓库的默认名称是 "origin"，但你也可以推送到其他远程仓库，只需指定相应的远程仓库名称。
+- `<branch>` 是你要推送的本地分支的名称。
+
+以下是一些示例：
+
+1. 推送本地分支到默认远程仓库（通常是 "origin"）的同名分支：
+
+   ```bash
+   git push origin my-branch
+   ```
+
+   这将把名为 `my-branch` 的本地分支推送到远程仓库的 `my-branch` 分支。
+
+2. 推送本地分支到默认远程仓库的不同分支：
+
+   ```bash
+   git push origin my-branch:remote-branch
+   ```
+
+   这将把名为 `my-branch` 的本地分支推送到远程仓库的 `remote-branch` 分支。你可以选择将本地分支重命名为远程分支。
+
+3. 推送多个本地分支：
+
+   ```bash
+   git push origin branch1 branch2
+   ```
+
+   这将同时推送多个本地分支到远程仓库。
+
+4. 推送所有分支：
+
+   ```bash
+   git push --all
+   ```
+
+   这将推送所有本地分支到远程仓库。
+
+在执行 `git push` 命令之前，**请确保你已经提交了本地分支上的所有更改**，否则它们不会被推送到远程仓库。另外，**你需要有推送权限才能将更改推送到远程仓库**。
+
+
+
+
+
+### 例子
+
+远程没有分支会自动创建，**推送时不需要切换到main分支**
+
+```
+PS E:\next-blog\10-21-blog1> git push origin produce
+Total 0 (delta 0), reused 0 (delta 0), pack-reused 0
+remote: 
+remote: Create a pull request for 'produce' on GitHub by visiting:
+remote:      https://github.com/burnchi/my-next-blog/pull/new/produce
+remote:
+To https://github.com/burnchi/my-next-blog.git
+ * [new branch]      produce -> produce
+```
+
+
+
+
+
+
+
+
+
+# 查看远程仓库
+
+```
+git remote -v
+origin  https://github.com/burnchi/blog.git (fetch)
+origin  https://github.com/burnchi/blog.git (push)
+```
+
+
+
+## 添加远程仓库
+
+```
+git remote add <shortname> <url> 添加一个新的远程 Git 仓库，同时指定一个方便使用的简写
+现在你可以在命令行中使用字符串 shortname 来代替整个 URL
+```
+
+
+
+## 从远程仓库中抓取与拉取
+
+```
+git fetch <remote>|<shortname>
+```
+
+这个命令会访问远程仓库，从中拉取所有你还没有的数据。 执行完成后，你将会拥有那个远程仓库中所有分支的引用，可以随时合并或查看。
+
+
+
+## 推送到远程仓库
+
+当你想分享你的项目时，必须将其推送到上游。 这个命令很简单：`git push <remote> <branch>`。 当你想要将 `master` 分支推送到 `origin` 服务器时（再次说明，克隆时通常会自动帮你设置好那两个名字）， 那么运行这个命令就可以将你所做的备份到服务器：
+
+```
+git push origin master
+```
+
+
+
+## 更多
+
+[https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8](https://git-scm.com/book/zh/v2/Git-%E5%9F%BA%E7%A1%80-%E8%BF%9C%E7%A8%8B%E4%BB%93%E5%BA%93%E7%9A%84%E4%BD%BF%E7%94%A8)
+
+
+
+
+
+
+
+# 将别人的项目代码放到自己新创建的仓库中
+
+如果您想将别人的项目代码复制到自己新创建的仓库中，可以按照以下步骤操作：
+
+1. **创建新仓库：** 首先，创建一个新的 Git 仓库，无论是在 GitHub、GitLab、Bitbucket，或者使用本地的方式。
+
+2. **克隆您的新仓库：** 使用 `git clone` 命令将您新创建的仓库克隆到本地计算机。
+
+   ```bash
+   git clone https://github.com/your-username/your-new-repo.git
+   ```
+
+   将 `your-username` 替换为您的用户名，将 `your-new-repo` 替换为您的新仓库的名称。
+
+3. cd 到新仓库的文件夹
+
+4. **添加原始项目作为远程仓库：** 您需要将原始项目（您想要复制的项目）添加为远程仓库，以便您可以获取它的代码。
+
+   ```bash
+   git remote add upstream https://github.com/original-owner/original-repo.git
+   ```
+
+   将 `original-owner` 替换为原始项目的所有者的用户名，将 `original-repo` 替换为原始项目的名称。
+
+5. **获取原始项目的代码：** 使用 `git fetch` 命令获取原始项目的代码。
+
+   ```bash
+   git fetch upstream
+   ```
+
+6. **合并原始项目的代码：** 使用 `git merge` 或 `git rebase` 命令将原始项目的代码合并到您的新仓库中。如果您只是想简单地将原始项目的代码复制到您的新仓库中，使用 `git merge` 即可。
+
+   ```bash
+   git merge upstream/main
+   ```
+
+   这会将原始项目的代码合并到您的新仓库中的主分支（通常是 "main" 或 "master"）。
+
+7. **推送更改到您的新仓库：** 最后，使用 `git push` 命令将合并后的代码推送到您的新仓库。
+
+   ```bash
+   git push origin main
+   ```
+
+   这将把原始项目的代码复制到您的新仓库中。
+
+现在，您已经成功将原始项目的代码复制到您的新仓库中。请注意，这不会影响原始项目，只是将其代码克隆到新的仓库，以便您可以在新仓库中进行修改和管理。
+
+
+
+
+
+# 码云代码托管平台
+
+
+
+
+

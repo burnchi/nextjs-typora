@@ -1,0 +1,60 @@
+---
+title: Python找图片并复制到其他地方
+date: 2023-10-26
+description: 如何将typora里的图片按需转移到自己的nextjs博客项目中...
+tags:
+- python
+- 编程语言
+---
+
+```python
+import os
+import re
+import time
+import shutil
+
+root_folder =  r"E:\next-blog\10-21-blog1\posts" + '\\'  # 替换成你的根文件夹路径
+pic_source_folder = r"E:\mdpic" + '\\'
+pic_dest_folder = r"E:\next-blog\10-21-blog1\public\mdpic" + '\\'
+file_list = []
+pic_list = []
+picpattern = """src=\"/mdpic/(.*?)\""""
+
+# 收集根目录下的所有文件
+for root, dirs, files in os.walk(root_folder):
+    for file in files:
+        file_path = os.path.join(root, file)
+        file_list.append(file_path)
+
+for file_path in file_list:
+    try:
+        # 读每一个文件
+        with open(file_path, "r",encoding="utf-8") as file:
+            file_content = file.read()
+        
+        # print(modified_text) 
+        # 找到图片信息,截取image-20231027230732133.png这部分
+        # src="/mdpic/image-20231027230732133.png"
+        pic = re.findall(picpattern,file_content)
+        if pic:
+            pic_list += pic
+        time.sleep(0.5)
+    except Exception as e:
+        print("发生了异常:", e)
+
+# 拿图片名列表拼接图片路径
+print(pic_list)
+for i in pic_list:
+    pic_s_path = pic_source_folder + i
+    pic_d_path = pic_dest_folder + i
+    # 将所有读到的图片路径复制到项目中
+    try:
+        shutil.copy(pic_s_path, pic_d_path)
+        print(i,"图片已复制到",pic_dest_folder)
+
+    except Exception as e:
+        print("发生了异常:", e) 
+
+    time.sleep(0.5)
+
+```

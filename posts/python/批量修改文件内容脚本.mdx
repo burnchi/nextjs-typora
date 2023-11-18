@@ -1,0 +1,58 @@
+---
+title:  Python批量修改文件内容脚本
+date: 2023-10-26
+description: 本文介绍了一个使用 Python 编写的批量修改文件内容脚本，帮助您快速、高效地完成批量文件内容的修改操作....
+tags:
+- python
+- 编程语言
+---
+
+```python
+import os
+import re
+import time
+
+# 替换成你的根文件夹路径
+root_folder =  r"E:\next-blog\10-21-blog1\posts" + '\\'  
+file_list = []
+# 获取md中图片样式
+picpattern = "!\[.*?\]\(E:\\\\mdpic\\\\(.*?)\)"
+
+#修改md样式为Next组件
+def replacement_function(match):
+    image_name = match.group(1)
+    return f"""<Image
+            src="/mdpic/{image_name}"
+            width="1920"
+            height="1080"
+            alt="{image_name}"
+            />"""
+
+# 收集根目录下的所有文件路径
+for root, dirs, files in os.walk(root_folder):
+    for file in files:
+        file_path = os.path.join(root, file)
+        file_list.append(file_path)
+
+# 遍历所有文件的路径
+for file_path in file_list:
+    # print(file_path)
+    try:
+        # 逐个打开并读取内容
+        with open(file_path, "r",encoding="utf-8") as file:
+            file_content = file.read()
+        
+        # 找到md中图片样式后替换成Next组件
+        modified_text = re.sub(picpattern, replacement_function, file_content)
+
+        # 写入文件
+        with open(file_path, "w",encoding="utf-8") as file:
+            file.write(modified_text)
+            print(f"{file_path} 写入成功")
+
+        time.sleep(0.5)
+    except Exception as e:
+        print("发生了异常:", e)
+
+```
+

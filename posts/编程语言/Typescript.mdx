@@ -1,0 +1,511 @@
+---
+title: TypeScript基础知识
+date: 2023-10-26
+description: TypeScript（缩写为 TS）是一种开源的编程语言，它是JavaScript的一个超集，添加了静态类型检查和一些新的特性。
+tags:
+- Typescript
+- 编程语言
+---
+
+# Typescript是什么
+
+TypeScript（缩写为 TS）是一种开源的编程语言，**它是JavaScript的一个超集**，添加了静态类型检查和一些新的特性。TypeScript由Microsoft开发并维护，它的目标是增强JavaScript的可维护性和可读性，并使大型代码库更容易管理。以下是 TypeScript 的主要特点和优势：
+
+1. **静态类型检查**：TypeScript引入了静态类型系统，允许开发者在编码时明确定义变量的类型。这可以帮助发现潜在的类型错误并提供更好的代码智能感知。例如，你可以声明一个变量为字符串类型，并在后续代码中防止将数字赋给它。
+
+2. **强大的工具支持**：TypeScript集成了强大的开发工具，如代码智能感知、自动完成、重构支持等。编辑器（如Visual Studio Code）和IDE（如WebStorm）提供了对TypeScript的良好支持。
+
+3. **增强可读性**：由于添加了类型注解，TypeScript代码通常更易于阅读和理解。类型信息可以充当文档，帮助开发者了解代码的意图。
+
+4. **模块化开发**：TypeScript支持模块化开发，允许将代码分解为小模块，提高了代码的可维护性和复用性。
+
+5. **生态系统**：TypeScript可以与现有的JavaScript库和框架一起使用，因为它兼容标准的JavaScript。它也有自己的类型声明文件（`.d.ts`），使得许多JavaScript库可以与TypeScript无缝集成。
+
+6. **适用于大型项目**：TypeScript特别适用于大型项目，因为它可以减少潜在的类型错误，并提供更严格的代码约束，有助于避免在运行时出现意外错误。
+
+7. **社区支持**：TypeScript拥有庞大的社区和活跃的维护团队，提供了丰富的文档、示例和支持资源。
+
+8. **渐进采用**：你可以将TypeScript渐进地引入到现有的JavaScript项目中，无需一次性重写所有代码。
+
+总之，TypeScript是一种强类型的编程语言，旨在提高JavaScript应用程序的可维护性、可读性和可靠性。它在大型项目、团队协作以及对代码质量和类型安全性有较高要求的场景中特别有价值。虽然学习曲线可能会略高于纯JavaScript，但它可以为开发者提供更多的工具和保障，以提高代码的质量和稳定性。
+
+## 静态类型检查
+
+**没运行前就提示错误**
+
+<Image
+src="/mdpic/image-20231003140558861.png"
+width="718"
+height="404"
+alt="image-20231003140558861.png"
+/>
+
+
+
+## 非异常故障检测
+
+<Image
+src="/mdpic/image-20231003140758773.png"
+width="718"
+height="404"
+alt="image-20231003140758773.png"
+/>
+
+
+
+
+
+# 工具
+
+1. vscode
+2. node.js
+
+```
+node -v 检测是否下载成功
+```
+
+
+
+1. Typescript
+
+```
+npm i typescript -g
+```
+
+
+
+
+
+# ts代码编译成js
+
+```
+tsc .\hello.ts
+```
+
+<Image
+src="/mdpic/image-20231003141626612.png"
+width="718"
+height="404"
+alt="image-20231003141626612.png"
+/>
+
+
+
+# 优化编译
+
+<Image
+src="/mdpic/image-20231003141746798.png"
+width="718"
+height="404"
+alt="image-20231003141746798.png"
+/>
+
+
+
+## 解决ts，js函数名重复
+
+ts编译后会变成js，ts和js中函数名会重名，解决
+
+```
+tsc --init 
+```
+
+
+
+## 自动编译
+
+**--noEmitOnError  ts有错误不会自动编译**
+
+```
+tsc --watch --noEmitOnError  ...ts
+```
+
+
+
+# 显式的类型
+
+到目前为止，我们还没有告诉 TypeScript `person` 或 `date` 是什么。 让我们编辑代码来告诉 TypeScript `person` 是一个 `string`，而 `date` 应该是一个 `Date` 对象。 我们还将在 `date` 上使用 `toDateString()` 方法。
+
+```
+function greet(person: string, date: Date) {
+  console.log(`Hello ${person}, today is ${date.toDateString()}!`);
+}
+```
+
+
+
+# 安装基于ts的react项目
+
+```
+create-react-app app-ts --template typescript
+```
+
+**项目结构**
+
+<Image
+src="/mdpic/image-20231012172037460.png"
+width="718"
+height="404"
+alt="image-20231012172037460.png"
+/>
+
+
+
+启动
+
+```
+npm start
+```
+
+
+
+
+
+
+
+# 创建新ts文件报错
+
+```
+ERROR in src/01-ts基础/01-基本类型.ts
+TS1208: '01-基本类型.ts' cannot be compiled under '--isolatedModules' because it is considered a global script file. Add an import, export, or an empty 'export {}' statement to make it a module.
+```
+
+新ts文件一定要导出
+
+```
+export default {}
+```
+
+
+
+
+
+# 基本类型定义
+
+```
+var name:string = "burnchi"
+name.substring(0,1)
+
+var age:number = 111
+
+var isShow:boolean = true
+
+var my:string|number = "burnchi"
+my = 100
+
+var myany:any = 100  //接收任何类型的参数
+```
+
+
+
+# 数组定义
+
+```
+var list:string[] = ['1','2','3']
+var list1:number[] = [1,2,3]
+var list2:(string|number)[] = [1,2,3,"4"]
+var mylist1:Array<string> = ['1','2','3']
+var mylist2:Array<string|number> = ['1','2',3]   //泛型
+```
+
+
+
+# 对象
+
+**定义一个接口**，**限制引用接口的对象**，变量名，变量的类型，变量个数必须一摸一样否则报错
+
+```
+interface IObj {
+    name:string,
+    age:boolean
+}
+
+var obj1:IObj = {
+    name:"burnchi",
+    age:11
+}
+```
+
+## 单个可选属性
+
+```
+interface IObj {
+    name:string,
+    age:number
+    location?:string
+}
+```
+
+## 多个可选属性
+
+```
+interface IObj {
+    name:string,
+    age:number
+    location?:string,
+    [propName:string]:any
+}
+
+var obj1:IObj = {
+    name:"burnchi",
+    age:11,
+    sex:'boy'
+}
+
+```
+
+## 对象中有方法
+
+```
+interface IObj {
+    name:string,
+    age:number
+    location?:string
+    getName:(name:string)=>string
+}
+```
+
+```
+var obj1:IObj = {
+    name:"burnchi",
+    age:11,
+    getName:(name:string)=>{
+    	return name
+    }
+}
+```
+
+
+
+# 函数
+
+c可选的形参，返回值必须是一个字符串
+
+```
+function test1(a:string,b:string,c?:number):string{
+    console.log(a,b)
+    return a
+}
+
+test1('1','2')
+```
+
+
+
+# 接口
+
+类实现接口，可以约束类的形状
+
+```
+interface IFunc{
+    getName:()=>string
+}
+
+class A implements IFunc{
+
+    a1(){
+
+    }
+
+    getName(){
+        return 'aaa'
+    }
+}
+
+var obj1 = new A()
+
+console.log(obj1.getName())
+```
+
+
+
+# 用接口定义包含多个对象的数组
+
+```
+interface IFilm{
+  filmId:number
+  name:string
+}
+
+ const filmsLis:IFilm[] = films.data.films    //filmsLis里面的数据结构 ===》[{...},{...},{...}]
+
+//渲染
+<ul>
+	{filmsLis.map(item => <li key={item.filmId}>{item.name}</li>)}
+</ul>
+```
+
+
+# 类型别名
+
+```
+type Point = {
+  x: number;
+  y: number;
+};
+ 
+// Exactly the same as the earlier example
+function printCoord(pt: Point) {
+  console.log("The coordinate's x value is " + pt.x);
+  console.log("The coordinate's y value is " + pt.y);
+}
+ 
+printCoord({ x: 100, y: 100 });
+```
+
+```
+type ID = number | string;
+```
+
+
+
+# 类型断言
+
+有时您会获得 TypeScript 无法了解的值类型信息。
+
+
+
+
+
+# 操作Dom的ts（HTML对象属性报错）
+
+以下这段代码报错，但是运行起来功能是没问题的，HTML对象里确实有offsetTop这个属性
+
+<Image
+src="/mdpic/image-20231022234315011.png"
+width="718"
+height="404"
+alt="image-20231022234315011.png"
+/>
+
+消除报错 
+
+在 TypeScript 中，类型断言可以用于告诉编译器你知道某个值的类型，从而避免编译时错误。在这个情况下，你可以使用类型断言来告诉编译器 `NodeList` 中的元素都是 `HTMLElement` 类型的。例如：
+
+<Image
+src="/mdpic/image-20231022234525562.png"
+width="718"
+height="404"
+alt="image-20231022234525562.png"
+/>
+
+
+
+通过在 `querySelectorAll` 的结果上添加 `as NodeListOf<HTMLElement>` 类型断言，你告诉 TypeScript 编译器你已经明确知道这些元素是 `HTMLElement` 类型，从而避免了类型检查的性能损失。
+
+**但请注意，只有在你确定 `querySelectorAll` 结果中的所有元素都是 `HTMLElement` 类型时才能使用这种方法**。如果有任何非 `HTMLElement` 类型的元素混合在结果中，这种方法将导致运行时错误。在这种情况下，使用 `if` 来检查元素类型是更安全的方法。
+
+
+
+
+
+# 事件监听参数报错
+
+## onChange事件
+
+```
+const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+        // console.log(e.target.value)
+            if (e.target.value.length === 0 ) {
+                setblogList([])
+            }else{
+                var newList = bakblogList.filter(blog => blog.title.toUpperCase().includes(e.target.value.toUpperCase()))
+                // 展示匹配列表
+                results.style.display = 'block'
+                setblogList(newList)
+            }
+    }
+```
+
+## 键盘事件
+
+```
+    // 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) =>{
+        if (results.style.display === 'block') {
+            if (e.key === 'ArrowDown') {
+                selectedIndex = Math.min(selectedIndex + 1, results.children.length - 1)
+                updateSelection();
+            }else if (e.key === 'ArrowUp') {
+                selectedIndex = Math.max(selectedIndex - 1, -1);
+                updateSelection();
+            } else if (e.key === 'Enter' && selectedIndex >= 0) {
+                inputRef.current.value = results.children[selectedIndex].textContent;
+                results.style.display = 'none';
+            }
+        }
+    }
+```
+
+
+
+
+
+# 使用Ref报错
+
+```
+const inputRef = useRef<HTMLInputElement | null>()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
