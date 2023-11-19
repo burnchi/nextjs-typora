@@ -87,3 +87,93 @@ div>a.active::before{
   left: 0;
   background-color: rgb(66, 66, 66);
 }
+
+/* 有序列表 */
+ol li::marker {
+  color: purple !important;
+}
+
+/* 无序列表 */
+ul li::marker {
+  color: orange !important;
+}
+
+
+/* 任务列表 */
+.contains-task-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  font-size: large;
+}
+.contains-task-list>li {
+  padding: 0;
+  margin: 0;
+  width: 8rem;
+  height: 2.5rem;
+}
+
+.contains-task-list>li>input {
+  margin-right: 0.5rem;
+}
+
+/* 文章内联引用 */
+code::before{
+  content: "" !important;
+}
+code::after{
+  content: "" !important;
+}
+
+/* 粗体字 */
+strong {
+  font-size: 1.1rem;
+}
+
+/* 文章高亮元素 */
+.HighlightEle{
+  background-color: yellow;
+}
+
+code{
+  background-color: #25292e;
+  border-radius: 0.375rem;
+  padding-top: 2px;
+  padding-bottom: 3px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-left: 2px;
+  margin-right: 2px;
+  color: white !important;
+}
+
+/* 代码块显示行号 */
+code {
+  counter-reset: line;
+}
+ 
+code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+ 
+  /* Other styling */
+  display: inline-block;
+  width: 2rem;
+  text-align: left;
+  color: gray;
+}
+ 
+code[data-line-numbers-max-digits='2'] > [data-line]::before {
+  width: 2rem;
+}
+ 
+code[data-line-numbers-max-digits='3'] > [data-line]::before {
+  width: 3rem;
+}
+
+/* 目录高亮 */
+.is-active {
+  color: rgb(80, 80, 213);
+  text-decoration: none;
+  font-weight: 600;
+}

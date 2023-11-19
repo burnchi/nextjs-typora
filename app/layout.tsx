@@ -1,9 +1,8 @@
 import LeftSideLayout from '@/components/home/LeftSideLayout'
 import './globals.css'
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
+import { twMerge } from 'tailwind-merge'
+import { myFont3 } from '@/components/Font/fonts'
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -17,8 +16,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className='m-0 p-0 w-[100vw] h-[100vh] border flex'>
-        <LeftSideLayout></LeftSideLayout>
+      <body className={twMerge(myFont3.className,`m-0 p-0 w-[100dvw] border flex overflow-x-hidden`)} >
+      <LeftSideLayout />
         {children}
         </body>
     </html>

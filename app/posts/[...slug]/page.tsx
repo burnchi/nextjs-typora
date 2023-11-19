@@ -1,14 +1,23 @@
 import React from 'react'
-import { allPosts } from 'contentlayer/generated'
+import { allPosts, Post } from 'contentlayer/generated'
+import RenderMdx from '@/components/blog/RenderMdx'
 
-const PostsPage = ({params} : {params:{slug:string[]}}) => {
-    // console.log(params.slug);
-    // const post = allPosts.find(post => post.)
+export async function generateStaticParams() {
+    return allPosts.map((post) => ({
+      slug: post._raw.flattenedPath.split('/'),
+    }))
+  }
+
+
+const PostsPage = ({ params }: { params: { slug: string[] } }) => {
+    const decodeSlug = decodeURI(params.slug.join("/"))
+    const post: Post = allPosts.find((post) => post._raw.flattenedPath === decodeSlug)
+
     return (
-        // post只显示在右侧
-        <div className='flex-1 border'>
-            {params.slug.length}
-        </div>
+            
+            <article className='flex-1 border'>
+                <RenderMdx post={post} />
+            </article>
     )
 }
 
