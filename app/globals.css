@@ -75,9 +75,10 @@
   }
 }
 
-
+/* 左侧栏文章选中高亮 */
 div>a.active{
   background-color: rgb(235, 234, 234);
+  color: black;
 }
 div>a.active::before{
   content: "";
@@ -177,3 +178,35 @@ code[data-line-numbers-max-digits='3'] > [data-line]::before {
   text-decoration: none;
   font-weight: 600;
 }
+
+.ullist a.active{
+  background-color: rgb(235, 173, 59);
+}
+
+
+
+/* ===== Scrollbar CSS ===== */
+  /* Firefox */
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: #ebebeb #ffffff;
+  }
+
+  /* Chrome, Edge, and Safari */
+  *::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: #ffffff;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: #ebebeb;
+    border-radius: 0px;
+    border: 0px solid #ffffff;
+  }
+
+  .sectionBtn:focus{
+    outline: none;
+  }

@@ -1,6 +1,6 @@
 // please update required information
 const siteMetadata = {
-    title: '大爷来看看',
+    title: 'Hapora',
     author: 'Chris',
     headerTitle: 'Next.js Blog',
     language: 'zh_CN',
@@ -10,7 +10,7 @@ const siteMetadata = {
     github: 'https://github.com/burnchi',
     bilibili:"https://space.bilibili.com/376031277",
     locale: 'zh_CN',
-    siteDeployTime: new Date('2023-10-21')
+    siteDeployTime: new Date('2023-11-18')
   }
   
 export default siteMetadata

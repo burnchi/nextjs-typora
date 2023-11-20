@@ -45,7 +45,7 @@ const LeftSideLayout = () => {
 
    
     return (
-        <div className='w-[20vw]  border flex flex-col h-[100vh] sticky top-0 left-0 overflow-y-hidden'>
+        <div className='w-[20vw] border-r  flex flex-col h-[99dvh] sticky top-0 left-0 overflow-y-auto'>
             {/* 选项卡 */}
             <SectionCardLayout></SectionCardLayout>
 

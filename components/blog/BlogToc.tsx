@@ -7,8 +7,6 @@ const BlogToc = ({ post }) => {
     useEffect(() => {
         if (post.toc.length != 0) {
 
-            const motionQuery = window.matchMedia('(prefers-reduced-motion)')
-
             const TableOfContents = {
                 container: document.querySelector('.js-toc'),
                 links: null,
@@ -62,10 +60,14 @@ const BlogToc = ({ post }) => {
                         firstVisibleLink.classList.add('is-active')
                     }
 
-                    if (!firstVisibleLink && this.previousSection) {
-                        this.container.querySelector(
+                    if (!firstVisibleLink && this.previousSection ) {
+                        // console.log(this.previousSection);
+                        const activeLink =  this.container.querySelector(
                             `a[id="#${this.previousSection}"]`
-                        ).classList.add('is-active')
+                        )
+                        if (activeLink) {
+                            activeLink.classList.add('is-active')
+                        }
                     }
                 },
 
@@ -96,7 +98,7 @@ const BlogToc = ({ post }) => {
         // return ()=> {delete TableOfContents}
     }, [post.toc.length])
     return (
-        <div className='w-full flex-1 overflow-y-auto'>
+        <div className='w-full flex-1 overflow-y-scroll'>
             <ul className=' text-base mt-4 js-toc' >
                 {
                     post.toc.length != 0 ?

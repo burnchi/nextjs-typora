@@ -6,10 +6,12 @@ interface State {
 
 type Action = {
     setisFile: () => void
+    setFile: (item:boolean) => void
 }
 
 export const useStore = create<State & Action>()(
     (set) => ({
         isFile: true,
-        setisFile: () => set((state) => ({ isFile: !state.isFile }))
+        setisFile: () => set((state) => ({ isFile: !state.isFile })),
+        setFile: (item) => set(() => ({ isFile: item })),
     }))

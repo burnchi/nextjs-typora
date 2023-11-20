@@ -1,6 +1,7 @@
 import React from 'react'
 import { allPosts, Post } from 'contentlayer/generated'
 import RenderMdx from '@/components/blog/RenderMdx'
+import SearchDialog from '@/components/home/SearchDialog'
 
 export async function generateStaticParams() {
     return allPosts.map((post) => ({
